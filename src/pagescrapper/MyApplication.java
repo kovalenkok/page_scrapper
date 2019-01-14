@@ -6,11 +6,10 @@
 package pagescrapper;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
 /**
@@ -21,29 +20,29 @@ public class MyApplication extends Application {
 
     private static final String URL = "http://www.sia.ch/fr/affiliation/liste-des-membres/membres-etudiants/m/236019/";
 
+    private WebView browser;
+    private WebEngine webEngine;
+
     @Override
     public void start(Stage primaryStage) {
-        Button btn = new Button();
-        btn.setText("Start Test");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
+        browser = new WebView();
+        webEngine = browser.getEngine();
 
-            @Override
-            public void handle(ActionEvent event) {
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(browser);
 
-            }
-        });
+        Scene scene = new Scene(scrollPane, 800, 600);
 
-        StackPane root = new StackPane();
-        root.getChildren().add(btn);
-
-        Scene scene = new Scene(root, 300, 250);
-
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("PageScrapper");
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        String html = ScrapHelper.getHTMLFrom(URL);
-        System.out.println(html);
+        // Example usage of the method.
+        Thread thread = new Thread(() -> {
+            String html = getHTMLFrom(URL);
+            System.out.println(html);
+        });
+        thread.start();
     }
 
     /**
@@ -51,6 +50,16 @@ public class MyApplication extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private String getHTMLFrom(String url) {
+        ScrapTask task = new ScrapTask(webEngine, url);
+        try {
+            return task.call();
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
 
 }
