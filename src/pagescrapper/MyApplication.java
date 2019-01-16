@@ -35,7 +35,7 @@ public class MyApplication extends Application {
 
         primaryStage.setTitle("PageScrapper");
         primaryStage.setScene(scene);
-        primaryStage.show();
+        primaryStage.hide();
 
         // Example usage of the method.
         Thread thread = new Thread(() -> {
